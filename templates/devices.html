@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Network Devices - DNA Center{% endblock %}
+
+{% block content %}
+<h2 style="color: #2c3e50; margin-bottom: 30px;">
+    📡 Network Devices Inventory
+</h2>
+
+{% if result.success %}
+<div class="alert alert-success">
+    ✅ Successfully retrieved {{ devices|length }} device(s)
+</div>
+
+{% if devices %}
+<table>
+    <thead>
+        <tr>
+            <th>Hostname</th>
+            <th>IP Address</th>
+            <th>Platform</th>
+            <th>Status</th>
+            <th>Serial Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for device in devices %}
+        <tr>
+            <td style="font-weight: 600; color: #2c3e50;">
+                {{ device.hostname|default:"N/A" }}
+            </td>
+            <td>
+                <code style="background: #ecf0f1; padding: 4px 8px; border-radius: 4px;">
+                            {{ device.managementIpAddress|default:"N/A" }}
+                        </code>
+            </td>
+            <td>{{ device.platformId|default:"N/A" }}</td>
+            <td>
+                {% if device.reachabilityStatus == "Reachable" %}
+                <span style="color: #27ae60; font-weight: 600;">
+                    ✓ {{ device.reachabilityStatus }}
+                </span>
+                {% else %}
+                <span style="color: #e74c3c; font-weight: 600;">
+                    ✗ {{ device.reachabilityStatus|default:"Unknown" }}
+                </span>
+                {% endif %}
+            </td>
+            <td>{{ device.serialNumber|default:"N/A" }}</td>
+            <td>
+                {% if device.managementIpAddress %}
+                <a href="{% url 'device_interfaces' %}?ip={{ device.managementIpAddress }}" class="btn"
+                    style="padding: 8px 16px; font-size: 14px;">
+                    🔌 View Interfaces
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-left: 4px solid #3498db; border-radius: 5px;">
+    <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Inventory Summary</h4>
+    <p style="color: #555;">
+        Total Devices: <strong>{{ devices|length }}</strong><br>
+        Click "View Interfaces" to see detailed interface configurations for each device.
+    </p>
+</div>
+
+{% else %}
+<div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 10px;">
+    <div style="font-size: 4em; margin-bottom: 20px;">📭</div>
+    <h3 style="color: #7f8c8d;">No devices found in the inventory</h3>
+</div>
+{% endif %}
+
+{% else %}
+<div class="alert alert-error">
+    ❌ Failed to retrieve devices: {{ result.error }}
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
+    <h4 style="color: #856404; margin-bottom: 10px;">⚠️ Troubleshooting</h4>
+    <ul style="color: #856404; margin-left: 20px;">
+        <li>Make sure you've authenticated first</li>
+        <li>Check DNA Center API connectivity</li>
+        <li>Verify your authentication token is valid</li>
+    </ul>
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'authenticate' %}" class="btn">
+        🔑 Authenticate First
+    </a>
+</div>
+{% endif %}
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'home' %}" class="btn" style="background: #95a5a6;">
+        🏠 Back to Home
+    </a>
+    <a href="{% url 'list_devices' %}" class="btn" style="background: #3498db; margin-left: 10px;">
+        🔄 Refresh
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Device Interfaces - DNA Center{% endblock %}
+
+{% block content %}
+<h2 style="color: #2c3e50; margin-bottom: 30px;">
+    🔌 Device Interface Configuration
+</h2>
+
+<form method="GET" action="{% url 'device_interfaces' %}" style="margin-bottom: 30px;">
+    <div class="form-group">
+        <label for="ip">Enter Device IP Address:</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="ip" name="ip" value="{{ device_ip }}" placeholder="e.g., 10.10.20.82" required
+                style="flex: 1;">
+            <button type="submit" class="btn">
+                🔍 Search Interfaces
+            </button>
+        </div>
+    </div>
+</form>
+
+{% if result %}
+{% if result.success %}
+<div class="alert alert-success">
+    ✅ Successfully retrieved {{ interfaces|length }} interface(s) for device {{ device_ip }}
+</div>
+
+{% if result.device %}
+<div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+    <h3 style="color: #2c3e50; margin-bottom: 15px;">📋 Device Information</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div>
+            <strong>Hostname:</strong><br>
+            {{ result.device.hostname|default:"N/A" }}
+        </div>
+        <div>
+            <strong>Platform:</strong><br>
+            {{ result.device.platformId|default:"N/A" }}
+        </div>
+        <div>
+            <strong>IP Address:</strong><br>
+            <code style="background: #ecf0f1; padding: 4px 8px; border-radius: 4px;">
+                        {{ result.device.managementIpAddress|default:"N/A" }}
+                    </code>
+        </div>
+        <div>
+            <strong>Status:</strong><br>
+            {% if result.device.reachabilityStatus == "Reachable" %}
+            <span style="color: #27ae60; font-weight: 600;">✓ Reachable</span>
+            {% else %}
+            <span style="color: #e74c3c; font-weight: 600;">✗ {{ result.device.reachabilityStatus }}</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if interfaces %}
+<h3 style="color: #2c3e50; margin: 30px 0 15px 0;">Interface Details</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Interface Name</th>
+            <th>Status</th>
+            <th>Admin Status</th>
+            <th>VLAN ID</th>
+            <th>Speed</th>
+            <th>MAC Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for intf in interfaces %}
+        <tr>
+            <td style="font-weight: 600; color: #2c3e50;">
+                {{ intf.portName|default:"N/A" }}
+            </td>
+            <td>
+                {% if intf.status == "up" %}
+                <span style="color: #27ae60; font-weight: 600;">
+                    ▲ UP
+                </span>
+                {% elif intf.status == "down" %}
+                <span style="color: #e74c3c; font-weight: 600;">
+                    ▼ DOWN
+                </span>
+                {% else %}
+                <span style="color: #95a5a6;">
+                    {{ intf.status|default:"N/A" }}
+                </span>
+                {% endif %}
+            </td>
+            <td>{{ intf.adminStatus|default:"N/A" }}</td>
+            <td>
+                {% if intf.vlanId %}
+                <span style="background: #3498db; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                    VLAN {{ intf.vlanId }}
+                </span>
+                {% else %}
+                N/A
+                {% endif %}
+            </td>
+            <td>{{ intf.speed|default:"N/A" }}</td>
+            <td>
+                <code style="background: #ecf0f1; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                {{ intf.macAddress|default:"N/A" }}
+                            </code>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-left: 4px solid #3498db; border-radius: 5px;">
+    <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Interface Summary</h4>
+    <p style="color: #555;">
+        Total Interfaces: <strong>{{ interfaces|length }}</strong><br>
+        Device: <strong>{{ result.device.hostname|default:device_ip }}</strong>
+    </p>
+</div>
+
+{% else %}
+<div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 10px; margin-top: 20px;">
+    <div style="font-size: 4em; margin-bottom: 20px;">📭</div>
+    <h3 style="color: #7f8c8d;">No interfaces found for this device</h3>
+</div>
+{% endif %}
+
+{% else %}
+<div class="alert alert-error">
+    ❌ {{ result.error }}
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
+    <h4 style="color: #856404; margin-bottom: 10px;">💡 Tips</h4>
+    <ul style="color: #856404; margin-left: 20px;">
+        <li>Verify the IP address is correct</li>
+        <li>Check if the device exists in the inventory</li>
+        <li>Ensure you have proper authentication</li>
+        <li>Try viewing the device list first</li>
+    </ul>
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'list_devices' %}" class="btn">
+        📡 View All Devices
+    </a>
+</div>
+{% endif %}
+{% else %}
+<div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 10px;">
+    <div style="font-size: 4em; margin-bottom: 20px;">🔍</div>
+    <h3 style="color: #7f8c8d; margin-bottom: 15px;">Enter a device IP address to view its interfaces</h3>
+    <p style="color: #95a5a6;">You can find device IP addresses in the Network Devices page</p>
+    <div style="margin-top: 30px;">
+        <a href="{% url 'list_devices' %}" class="btn">
+            📡 View All Devices
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'home' %}" class="btn" style="background: #95a5a6;">
+        🏠 Back to Home
+    </a>
+    <a href="{% url 'list_devices' %}" class="btn" style="background: #3498db; margin-left: 10px;">
+        📡 View Devices
+    </a>
+</div>
+{% endblock %}

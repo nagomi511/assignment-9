@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - DNA Center Automation{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 40px 0;">
+    <h2 style="color: #2c3e50; margin-bottom: 30px; font-size: 2.5em;">
+        Welcome to Network Automation Dashboard
+    </h2>
+
+    <p style="font-size: 1.2em; color: #7f8c8d; margin-bottom: 50px;">
+        Manage and monitor your Cisco network devices with ease
+    </p>
+
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 40px;">
+
+        <div
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 15px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="font-size: 3em; margin-bottom: 20px;">🔑</div>
+            <h3 style="margin-bottom: 15px;">Authenticate</h3>
+            <p style="margin-bottom: 25px; opacity: 0.9;">Get your API authentication token</p>
+            <a href="{% url 'authenticate' %}" class="btn" style="background: white; color: #667eea;">
+                Get Token
+            </a>
+        </div>
+
+        <div
+            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px; border-radius: 15px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="font-size: 3em; margin-bottom: 20px;">📡</div>
+            <h3 style="margin-bottom: 15px;">Network Devices</h3>
+            <p style="margin-bottom: 25px; opacity: 0.9;">View all managed devices</p>
+            <a href="{% url 'list_devices' %}" class="btn" style="background: white; color: #f5576c;">
+                View Devices
+            </a>
+        </div>
+
+        <div
+            style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 40px; border-radius: 15px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <div style="font-size: 3em; margin-bottom: 20px;">🔌</div>
+            <h3 style="margin-bottom: 15px;">Device Interfaces</h3>
+            <p style="margin-bottom: 25px; opacity: 0.9;">Check interface configurations</p>
+            <a href="{% url 'device_interfaces' %}" class="btn" style="background: white; color: #00f2fe;">
+                View Interfaces
+            </a>
+        </div>
+
+    </div>
+
+    <div style="margin-top: 60px; padding: 30px; background: #ecf0f1; border-radius: 10px;">
+        <h3 style="color: #2c3e50; margin-bottom: 20px;">📚 About This Project</h3>
+        <p style="color: #7f8c8d; line-height: 1.8; max-width: 800px; margin: 0 auto;">
+            This application demonstrates network automation using the Cisco DNA Center REST API.
+            It allows you to authenticate, retrieve device inventory, and view interface configurations
+            programmatically. All interactions are logged to MongoDB for audit purposes.
+        </p>
+    </div>
+</div>
+{% endblock %}

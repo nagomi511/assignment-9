@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Authenticate - DNA Center{% endblock %}
+
+{% block content %}
+<h2 style="color: #2c3e50; margin-bottom: 30px;">
+    🔑 API Authentication
+</h2>
+
+{% if result.success %}
+<div class="alert alert-success">
+    ✅ Authentication Successful!
+</div>
+
+<h3 style="color: #2c3e50; margin-top: 30px; margin-bottom: 15px;">Your Authentication Token:</h3>
+<div class="token-display">
+    {{ token }}
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-left: 4px solid #3498db; border-radius: 5px;">
+    <h4 style="color: #2c3e50; margin-bottom: 10px;">ℹ️ Token Information</h4>
+    <p style="color: #555;">
+        This JWT token is used to authenticate all subsequent API requests to Cisco DNA Center.
+        It typically expires after a set period and must be refreshed for continued access.
+    </p>
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'list_devices' %}" class="btn">
+        📡 View Network Devices
+    </a>
+    <a href="{% url 'home' %}" class="btn" style="background: #95a5a6; margin-left: 10px;">
+        🏠 Back to Home
+    </a>
+</div>
+
+{% else %}
+<div class="alert alert-error">
+    ❌ Authentication Failed: {{ result.error }}
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 5px;">
+    <h4 style="color: #856404; margin-bottom: 10px;">⚠️ Troubleshooting</h4>
+    <ul style="color: #856404; margin-left: 20px;">
+        <li>Check if DNA Center sandbox is accessible</li>
+        <li>Verify credentials in dnac_config.py</li>
+        <li>Ensure network connectivity</li>
+    </ul>
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'authenticate' %}" class="btn">
+        🔄 Try Again
+    </a>
+    <a href="{% url 'home' %}" class="btn" style="background: #95a5a6; margin-left: 10px;">
+        🏠 Back to Home
+    </a>
+</div>
+{% endif %}
+
+<div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+    <h4 style="color: #2c3e50; margin-bottom: 15px;">🔐 Authentication Details</h4>
+    <table style="box-shadow: none;">
+        <tr>
+            <td style="font-weight: 600; width: 200px;">DNA Center Host:</td>
+            <td>sandboxdnac.cisco.com</td>
+        </tr>
+        <tr>
+            <td style="font-weight: 600;">Port:</td>
+            <td>443 (HTTPS)</td>
+        </tr>
+        <tr>
+            <td style="font-weight: 600;">Authentication Method:</td>
+            <td>HTTP Basic Auth → JWT Token</td>
+        </tr>
+        <tr>
+            <td style="font-weight: 600;">Endpoint:</td>
+            <td>/dna/system/api/v1/auth/token</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
